@@ -382,7 +382,7 @@ class RoundPlayer(models.Model):
 		default = 0
 		)
 
-class MatchEventTypeEnum(Enum):
+class MatchEventTypeEnum(str, Enum):
 	POINT_CAP = "pointcap"
 	UBER_CHARGE = "charge"
 	MEDIC_DEATH = "medic_death"
@@ -396,9 +396,19 @@ class MedigunEnum(Enum):
 class MatchEvent(models.Model):
 	match = models.ForeignKey(Match, on_delete = models.CASCADE)
 	match_round = models.ForeignKey(MatchRound, on_delete = models.CASCADE)
-	match_player = models.ForeignKey(MatchPlayer, on_delete = models.CASCADE)
-	killer = models.ForeignKey(MatchPlayer, on_delete = models.CASCADE, 
-		related_name = "player_killer")
+	#match_player = models.ForeignKey(MatchPlayer, on_delete = models.CASCADE)
+	match_player_id = models.CharField(
+		"Steam Player ID for player", 
+		max_length = 50
+		)
+	#killer = models.ForeignKey(MatchPlayer, on_delete = models.CASCADE, 
+	#	related_name = "player_killer")
+	killer_player_id = models.CharField(
+		"Steam Player ID for killer",
+		max_length = 50,
+		null = True,
+		default = None
+		)
 
 	event_type = models.CharField(
 		"Type of the round event",
@@ -417,10 +427,13 @@ class MatchEvent(models.Model):
 	event_medigun = models.CharField(
 		"Medigun used in event",
 		max_length = 10,
+		null = True,
+		default = None,
 		choices = [(tag, tag.value) for tag in MedigunEnum]
 		)
 	point = models.PositiveIntegerField(
 		"Point captured in event",
+		null = True,
 		default = None
 		)
 
